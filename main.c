@@ -10,85 +10,54 @@ struct command
     // void cmd = argv[0]; // phan tu dau tien
 } command;
 
-void strip(char *cmd);
-void parser_cmd(char *cmd);
-void ls();
-void pwd();
-void cd();
-void echo(struct command command);
-
-void cat();
-
 struct command command;
-
-int main()
-{
-
-    while (1)
-    {
-        char cmd[0x100];
-        memset(cmd, 0, 0x100);
-
-        for (int i = 0; i < command.argc; i++)
-        {
-            memset(command.argv[i], 0, 10);
-        }
-        printf("\n$ ");
-        fflush(stdout);
-        read(0, cmd, 100);
-        parser_cmd(cmd);
-        memset(cmd, 0, 0x100);
-
-        strcpy(cmd, command.argv[0]);
-        for (int i = 0; i < command.argc; i++)
-        {
-            printf("argv[%d] %s\n", i, command.argv[i]);
-        }
-
-        if (!strcmp(cmd, "ls"))
-        {
-            ls();
-        }
-        else if (strcmp(cmd, "pwd"))
-        {
-            pwd();
-        }
-        else if (strcmp(cmd, "cd"))
-        {
-            cd();
-        }
-        else if (strcmp(cmd, "echo"))
-        {
-            echo(command);
-        }
-        else if (strcmp(cmd, "cat"))
-        {
-            cat();
-        }
-    }
-}
 void ls()
 {
-    printf("ls called !");
+    printf("ls called !\n");
+    char ls_option[3] = {'l', 'h', 'a'}; //
+    // char option = check_if_command_option(ls_option); // 1 2 4 compile
 }
 void cd()
 {
 }
 void pwd()
 {
+    char current_work_dirrectory[100];
+    memset(current_work_dirrectory, 0, 100);
+    getcwd(current_work_dirrectory, 100);
+    printf("%s", current_work_dirrectory);
 }
 void cat()
 {
 }
-void echo(struct command command)
+char check_if_command_option(char *command_option_list)
 {
+    // nhan vao 1 list argv: a -a -l -lha
+    /* CHECK IF EXIST */
+    // char full_option[100];
+    // char tmp[100];
+    // for (int i = 1; i < command.argc; i++)
+    // {
+    //     memset(tmp, 0, 100);
+    //     char *check = strstr(command.argv[i], "-");
+    //     if (!check)
+    //     {
+    //         printf("option not found !\n");
+    //         break;
+    //     }
+    // }
+    /* TURN ON BIT FLAGS */
+}
+void echo(char *cmd) // format : echo [STRINGS]
+{
+    printf("%s", cmd + 5);
 }
 void strip(char *cmd)
 {
     int start_idx = 0;
     int len_cmd = strlen(cmd); // just idx
     int end_idx = len_cmd - 1;
-    while (cmd[start_idx] == ' ' || cmd[end_idx] == ' ')
+    while (cmd[start_idx] == ' ' || cmd[end_idx] == ' ' || cmd[end_idx] == '\n')
     {
         if (cmd[start_idx] == ' ')
             start_idx++;
@@ -111,8 +80,8 @@ void parser_cmd(char *cmd) //' ls -lh -a \n'
         command.argv[i] = malloc(0x10);
     }
     strip(cmd);
-    cmd[strlen(cmd)] = '\x00'; // input: 'ls -lh -a'
     int len_cmd = strlen(cmd);
+    cmd[len_cmd] = '\x00'; // input: 'ls -lh -a'
     int count = 0;
     command.argc = 0;
     char tmp[len_cmd];
@@ -133,6 +102,47 @@ void parser_cmd(char *cmd) //' ls -lh -a \n'
         {
             char c = cmd[i];
             strncat(tmp, &c, 1);
+        }
+    }
+    // printf("cmd :<%s>", command.argv[0]);
+}
+int main()
+{
+
+    while (1)
+    {
+        char cmd[0x100];
+        memset(cmd, 0, 0x100);
+
+        for (int i = 0; i < command.argc; i++)
+        {
+            memset(command.argv[i], 0, 10);
+        }
+        printf("\n$ ");
+        fflush(stdout);
+        read(0, cmd, 100);
+        char echo_cmd[strlen(cmd)];
+        strcpy(echo_cmd, cmd);
+        parser_cmd(cmd);
+        if (!strcmp(command.argv[0], "ls"))
+        {
+            ls();
+        }
+        else if (!strcmp(command.argv[0], "pwd"))
+        {
+            pwd();
+        }
+        else if (!strcmp(command.argv[0], "cd"))
+        {
+            cd();
+        }
+        else if (!strcmp(command.argv[0], "echo"))
+        {
+            echo(echo_cmd);
+        }
+        else if (!strcmp(command.argv[0], "cat"))
+        {
+            cat();
         }
     }
 }

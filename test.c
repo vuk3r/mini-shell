@@ -1,13 +1,9 @@
 #include <stdio.h>
 #include <string.h>
-
-void hello()
-{
-    int a[10] = {10};
-    printf("%d", a[0]);
-}
+#include <unistd.h>
 
 int main()
 {
-    hello();
+    char a[100] = "abc\n";
+    printf("%d",strlen(a));
 }
