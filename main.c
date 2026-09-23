@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <fcntl.h>
 struct command
 {
     char *argv[10]; // toi da 1 cau lenh co 9 tham so
@@ -56,6 +56,17 @@ void cd() // cd <LOCALTION>
 }
 void cat()
 {
+    int fd = open(command.argv[1], O_RDONLY);
+    if (fd == -1)
+    {
+        perror("error");
+        return;
+    }
+    char buf[0x1000];
+    while (read(fd, buf, 0x1000))
+    {
+        write(0, buf, strlen(buf));
+    }
 }
 char check_if_command_option(char *command_option_list)
 {
