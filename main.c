@@ -9,6 +9,8 @@ struct command
     char argc;
     // void cmd = argv[0]; // phan tu dau tien
 } command;
+char current_work_dirrectory[255];
+char previous_work_dirrectory[255];
 
 struct command command;
 void ls()
@@ -17,15 +19,40 @@ void ls()
     char ls_option[3] = {'l', 'h', 'a'}; //
     // char option = check_if_command_option(ls_option); // 1 2 4 compile
 }
-void cd()
-{
-}
 void pwd()
 {
-    char current_work_dirrectory[100];
     memset(current_work_dirrectory, 0, 100);
     getcwd(current_work_dirrectory, 100);
-    printf("%s", current_work_dirrectory);
+}
+void cd() // cd <LOCALTION>
+{
+    char location[255];
+    strcpy(location, command.argv[1]);
+
+    if (!strcmp(location, "-"))
+    {
+        memset(current_work_dirrectory, 0, 100);
+        strcpy(current_work_dirrectory, previous_work_dirrectory);
+        getcwd(previous_work_dirrectory, 100);
+        chdir(current_work_dirrectory);
+    }
+
+    else
+    {
+        memset(previous_work_dirrectory, 0, 100);
+        getcwd(previous_work_dirrectory, 100);
+        int check = chdir(location);
+        if (check == -1)
+        {
+            printf("The location doesn't existed !\n");
+        }
+        else
+        {
+            memset(current_work_dirrectory, 0, 100);
+            getcwd(current_work_dirrectory, 100);
+            printf("changed to %s", current_work_dirrectory);
+        }
+    }
 }
 void cat()
 {
@@ -106,6 +133,14 @@ void parser_cmd(char *cmd) //' ls -lh -a \n'
     }
     // printf("cmd :<%s>", command.argv[0]);
 }
+void help()
+{
+    printf("pwd : pwd\n");
+    printf("cd : cd <dir> || cd -\n");
+    printf("echo : echo <something>\n");
+    printf("ls : ls <dir> <option>\n");
+    printf("cat : cat <file>\n");
+}
 int main()
 {
 
@@ -118,12 +153,14 @@ int main()
         {
             memset(command.argv[i], 0, 10);
         }
-        printf("\n$ ");
+        pwd();
+        printf("\n%s$ ", current_work_dirrectory);
         fflush(stdout);
         read(0, cmd, 100);
         char echo_cmd[strlen(cmd)];
         strcpy(echo_cmd, cmd);
         parser_cmd(cmd);
+
         if (!strcmp(command.argv[0], "ls"))
         {
             ls();
@@ -131,6 +168,7 @@ int main()
         else if (!strcmp(command.argv[0], "pwd"))
         {
             pwd();
+            printf("%s", current_work_dirrectory);
         }
         else if (!strcmp(command.argv[0], "cd"))
         {
@@ -143,6 +181,10 @@ int main()
         else if (!strcmp(command.argv[0], "cat"))
         {
             cat();
+        }
+        else if (!strcmp(command.argv[0], "help"))
+        {
+            help();
         }
     }
 }

@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
 int main()
 {
-    char a[100] = "abc\n";
-    printf("%d",strlen(a));
+    char buf[50];
+    getcwd(buf, 255);
+    printf("pwd : %s\n", buf);
+    printf("%d", chdir("abc"));
 }
