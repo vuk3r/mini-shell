@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <dirent.h>
 struct command
 {
     char *argv[10]; // toi da 1 cau lenh co 9 tham so
@@ -13,13 +14,29 @@ char current_work_dirrectory[255];
 char previous_work_dirrectory[255];
 
 struct command command;
-void ls()
+void ls() // ls <-lha> <file>
 {
     printf("ls called !\n");
     char ls_option[3] = {'l', 'h', 'a'}; //
-    // char option = check_if_command_option(ls_option); // 1 2 4 compile
+    char default_path[5] = ".";
+
+    DIR *dir = opendir(default_path);
+    if (dir == NULL)
+    {
+        perror("NULL");
+        return;
+    }
+    else
+    {
+
+        while (readdir(dir)->d_name != NULL)
+        {
+            printf("%s", readdir(dir)->d_name);
+            // }
+        }
+    }
 }
-void pwd()
+void pwd() // pwd
 {
     memset(current_work_dirrectory, 0, 100);
     getcwd(current_work_dirrectory, 100);
@@ -67,24 +84,10 @@ void cat()
     {
         write(0, buf, strlen(buf));
     }
+    close(fd);
 }
 char check_if_command_option(char *command_option_list)
 {
-    // nhan vao 1 list argv: a -a -l -lha
-    /* CHECK IF EXIST */
-    // char full_option[100];
-    // char tmp[100];
-    // for (int i = 1; i < command.argc; i++)
-    // {
-    //     memset(tmp, 0, 100);
-    //     char *check = strstr(command.argv[i], "-");
-    //     if (!check)
-    //     {
-    //         printf("option not found !\n");
-    //         break;
-    //     }
-    // }
-    /* TURN ON BIT FLAGS */
 }
 void echo(char *cmd) // format : echo [STRINGS]
 {

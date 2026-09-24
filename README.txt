@@ -29,4 +29,5 @@
                   command
           │         │          │
           ▼         ▼          ▼
-       chdir()   fork/exec   pipe/dup2
+      chdir()   fork/exec   pipe/dup2
+
